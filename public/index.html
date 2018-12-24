@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Text Buffer</title>
+  
+</head>
+<body>
+  <div>
+    <textarea id="txtInput" style="width: 60%; max-width: 500px; display: inline-block;" rows="5"></textarea>
+    <button style="margin-left: 1em" onclick="send()">发送</button>
+    <button style="margin-left: 1em" onclick="clearInput()">清空</button>
+  </div>
+  <button style="margin: 1em" onclick="getTextList()">刷新列表</button>
+  <ul id="txtList">
+
+  </ul>
+
+  <script>
+      function send() {
+        var txtInput = document.querySelector("#txtInput")
+        var txtList = document.querySelector("#txtList")
+        var xhr = new XMLHttpRequest()
+        xhr.open('GET', 'add?txt=' + txtInput.value)
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState == 4 && xhr.status == 200) {
+            getTextList()
+          }
+        }
+        xhr.send()
+      }
+  
+      function getTextList() {
+        var xhr = new XMLHttpRequest()
+        xhr.open('GET', 'list')
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState == 4 && xhr.status == 200) {
+            var list = JSON.parse(xhr.responseText)
+            var txtList = document.querySelector("#txtList")
+            txtList.innerHTML = ''
+            for (let i = 0; i < list.length; i++) {
+              var li = document.createElement("li")
+              li.innerText = list[i]
+              txtList.appendChild(li)
+            }
+          }
+        }
+        xhr.send()
+      }
+
+      function clearInput() {
+        var txtInput = document.querySelector("#txtInput")
+        txtInput.value = ''
+      }
+
+      getTextList()
+    </script> 
+</body>
+</html>
